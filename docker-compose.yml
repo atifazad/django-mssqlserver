@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - ".:/app:rw"
+    environment:
+      DATABASE_URL: postgres://postgres@database_default:5432/db
+    links:
+      - "database_default"
+    command: python manage.py runserver 0.0.0.0:80
+
+  database_default:
+    image: postgres:13.5-alpine
+    environment:
+      POSTGRES_DB: "db"
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+      SERVICE_MANAGER: "fsm-postgres"
+    volumes:
+      - ".:/app:rw"
+      - "database-default:/var/lib/postgresql/data/"
+
+volumes:
+  database-default:
